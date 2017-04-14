@@ -37,8 +37,14 @@ Les utilisateurs devrait déjà avoir un compte Twilio pour pouvoir profiter de 
 
 ## SMPP API
 
-En fait, gatewaySMS utilise le protocole SMPP(Short message Peer-to-peer).
+En fait, gatewaySMS utilise le protocole SMPP(Short message Peer-to-peer). J'ai trouver de la documentation sur l'implémentation d'un système sous nodeJs. 
 
+Tutorial : [Here](http://kalapun.com/posts/working-with-sms-via-smpp-in-nodejs/)
+
+Projet : [SMPP](https://github.com/farhadi/node-smpp)
+
+
+Cette avenu pourrait potentiellement être la meilleur solution
 
 ## From scratch ? 
 
