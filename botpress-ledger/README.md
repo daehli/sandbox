@@ -20,7 +20,7 @@ Our systems have everything to build simple and humain request. This guide show 
 
 ### Date
 
-We are using a library call chrono for endling data format in your request.
+We are using a library call chrono for handling data format in your request.
 
 **What you can do**
 
@@ -52,8 +52,7 @@ Today date // 18 april 2017
 
 ### amount
 
-A regular expression is use for endling the parsing of a amound
-
+A regular expression is use for handling the parsing of the amound
 
 **What you can do**
 
@@ -76,7 +75,7 @@ A regular expression is use for endling the parsing of a amound
 0,00
 ```
 
-> Use the dot for separe with de decimal.
+> Use the dot for separating the number and the decimal.
 
 **What you should not do**
 
@@ -86,11 +85,11 @@ A regular expression is use for endling the parsing of a amound
 1,000,000,00 // Please no
 ```
 
-This case is pretty difficulte to handle. Don't use this donation. Put a dot instent a of comma for separating the decimal.
+This case is pretty difficult to handle. Don't use this donation. Put a dot instant a of comma for separating the decimal.
 
 ## Description
 
-For the moment the description is the dumpers parser. He only take the rest of the String and make a Concatenation with all the rest. Will change soon.
+For the moment the description is the dumpers parser. He only take the rest of the string and make a Concatenation with all the rest. Will change soon.
 
 **What you can do**
 
