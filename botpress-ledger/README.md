@@ -8,10 +8,10 @@ botpress-ledger is a bot that help freelancer to get rip of is outgo manager.
 - [X] Helper Menu
 - [X] Starter button
 - [X] Simple case
-- [] Groupe conversation
-- [] RiveScript
-- [] Add Delay in the callback
-- [] Devise ?
+- [ ] Groupe conversation
+- [ ] RiveScript
+- [ ] Add Delay in the callback
+- [ ] Devise ?
 
 
 ## Parse Request
@@ -46,7 +46,7 @@ Today date // 18 april 2017
 
 "A request with 2 different Date 10/03/2017 09/03/2017"
 
-// He will take the first one 
+// He will take the first one
 ```
 
 
