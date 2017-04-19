@@ -1,4 +1,5 @@
 var chrono = require('chrono-node');
+const BotpressBot = require('botpress-botkit').BotpressBot
 
 const sentence = {
 
@@ -12,7 +13,6 @@ const sentence = {
       content_type: 'text',
       title: 'Exemple of Use',
       payload: 'HELP_MENU_EXEMPLE'
-    }
     },
     {
       content_type: 'text',
@@ -25,8 +25,9 @@ const sentence = {
 }
 
 module.exports = function(bp) {
-  bp.middlewares.load()
-
+  var controller = BotpressBot(bp,{});
+  var bot = controller.spawn({});
+  
   bp.hear({
     type: 'postback',
     text: /START/i,
@@ -34,8 +35,56 @@ module.exports = function(bp) {
   }, (event, next) => {
     var first_name = event.user.first_name;
     var last_name = event.user.last_name;
+    console.log("PostBack Received.");
     bp.logger.info('New user:', first_name, last_name)
+    // Creation of the users for the First time.
+    var data = {
+      id: event.user.id,
+      platform: "facebook",
+      gender: event.user.gender,
+      timezone: event.user.timezone,
+      locale: event.user.locale,
+      picture_url: event.user.profile_pic,
+      last_name: event.user.last_name,
+      first_name: event.user.first_name
+    }
+    bp.messenger.sendText(event.user.id,"I'm Ledger-Bot. I was build to help Freelancer to track their outgo easily.")
+
+    bp.db.saveUser(data)
+    .then(knex=>{
+      console.log("Just create a New Users");
+    })
+    .catch(err=>{
+      console.log(bp.db.logger(err));
+    });
     next();
+  })
+
+  bp.hear({text:/ADD_CATEGORY/i,platform:"facebook",type:"postback"},(event,next)=>{
+    // console.log(event);
+    bp.db.get()
+    .then(knex=>{
+      knex.schema.createTableIfNotExists("categorie_type",table=>{
+        table.increments('id').primary();
+        table.string("category");
+        table.timestamps();
+      })
+    })
+
+    bp.messenger.sendText(event.user.id,"You are going to add a Category for helping you. Just tape your new category.")
+    .then(()=>{
+      bp.events.emit("Wait");
+    })
+
+    // bp.events.emit("add_category","Food");
+  })
+
+  bp.hear({text:/Review/i,platform:"facebook",type:"payload"},(event,next)=>{
+
+    bp.messenger.sendText(event.user.id,"You have made a request to get Amount Delivery");
+
+    // Code for generating pdf Data inside
+
   })
 
   bp.hear({text:'HELP_MENU_WHY',platform:'facebook',type:'quick_reply'},(event,next)=>{
@@ -48,23 +97,7 @@ module.exports = function(bp) {
  //   timezone: 2,
  //   gender: 'male',
  //   id: '1372516699453816' },
-    var data = {
-      id: event.user.id,
-      platform: "facebook",
-      gender: event.user.gender,
-      timezone: event.user.timezone,
-      locale: event.user.locale,
-      picture_url: event.user.profile_pic,
-      last_name: event.user.last_name,
-      first_name: event.user.first_name
-    }
 
-    bp.db.saveUser(data)
-    .then(knex=>{
-    })
-    .catch(err=>{
-      console.log(err)
-    });
 
     // bp.db.get()
     // .then(knex=>{
@@ -98,6 +131,17 @@ module.exports = function(bp) {
   })
 
 
+  bp.hear({text:'HELP_MENU_CATEGORIE',platform:"facebook",type:"quick_reply"},(event)=>{
+
+    bp.messenger.sendText(event.user.id,"You are going to add a Category for helping you. Just tape your new category.")
+    .then((event)=>{
+      bp.hear({text:/(.*)/i,platform:"facebook",text:"message"},(event)=>{
+        console.log(event.text);
+      })
+      console.log("Bot Bot");
+    })
+  })
+
 
   bp.hear({text:/menu/i,platform:'facebook',type:'message'},(event,next)=>{
 
@@ -109,7 +153,6 @@ module.exports = function(bp) {
     bp.messenger.sendText(event.user.id,"Alpha release of Ledger-Bot:\n Ledger-Bot help you to track your outgo. It was specificaly built for freelancer.",sentence)
   })
 
-  bp.hear({text:''})
 
   bp.hear({text:/(.*)/i,platform:'facebook',type:'message'},(event,next)=>{
 
@@ -120,8 +163,23 @@ module.exports = function(bp) {
 
 
     var knex = bp.db.get().then(knex=>{
-      console.log(knex);
-      knex.schema.createTable('c')
+      knex.schema.createTableIfNotExists("categorie_type",table=>{
+        table.increments('id').primary();
+        table.string("category");
+        table.timestamps();
+      })
+      .then(res=>{console.log("categorie_type \n " + res)})
+      .catch(err=>{bp.logger.info(err)})
+      knex.schema.createTableIfNotExists('big_book',table=>{
+        table.increments().primary();
+        table.string("descriptor");
+        table.float("amount",2);
+        table.date("date");
+        table.integer('categorie_id').unsigned();
+        table.foreign('categorie_id').references('categorie_type.id')
+      })
+      .then(res=>{console.log(res)})
+      .catch(err=>{bp.logger.info(err)})
     })
 
     var heared = event.text;
@@ -162,6 +220,7 @@ module.exports = function(bp) {
       }
     }
     else {
+      // Bientot à jour
       bp.messenger.sendText(event.user.id,"I don't find your amount. Can you give me your amount explitly ?")
       .then(()=>{
         console.log(parse);
@@ -173,7 +232,42 @@ module.exports = function(bp) {
 
     description = next;
 
+
     bp.messenger.sendText(event.user.id,"BotParse : Description : "+ description.toString() + " Time : " + strTime + " Amount : " + sum.toString());
 
+    // Faire plustard le lien avec les catégories.
+
+    var data = {
+      descriptor:description,
+      amount:sum,
+      date:Date.parse(strTime)
+    }
+
+    // Refactoring
+    bp.db.get()
+    .then(knex=>{
+      knex("big_book").insert(data)
+      .returning('id')
+      .then((res)=>{console.log("Add Category " + res)})
+      .catch(err=>{bp.db.logger(err)})
+    })
   })
+
+  bp.events.on("add_category",data=>{
+    // Transaction into the DB
+    console.log(data);
+    bp.db.get()
+    .then(knex=>{
+      knex("categorie_type").insert({category:data})
+      .returning('category')
+      .then(thx=>{console.log("Add Category " + thx )})
+    })
+  })
+
+  bp.events.on("wait",()=>{
+    bp.middlewares.sendIncoming()
+  })
+
+  bp.middlewares.load()
+
 }
