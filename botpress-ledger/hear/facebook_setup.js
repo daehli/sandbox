@@ -85,9 +85,20 @@ module.exports = function (bp) {
               "payload":"Review"
             },
             {
-              "title":"Review",
-              "type":"postback",
-              "payload":"Review"
+              "title":"Add outgo",
+              "type":"nested",
+              "call_to_actions":[
+                {
+                  "title": "Quick outgo",
+                  "type" : "postback",
+                  "payload":"QUICK_OUTGO"
+                },
+                {
+                  "title": "Add outgo",
+                  "type" : "postback",
+                  "payload":"ADD_OUTGO"
+                }
+              ]
             }
           ]
         }
