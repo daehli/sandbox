@@ -111,9 +111,9 @@ For the moment the description is the dumpers parser. He only take the rest of t
 
 We cannot use facebook controller of botkit because botpress only call the coreBot of botkit. We this way we cannot catch `facebook_postback` of botkit.
 
-It's a big issue because it's impossible to make to request with a postback.
+It's a big issue because it's impossible to make a request with a postback.
 
-I can go to (botprees-botkit)[https://github.com/botpress/botpress-botkit/blob/master/src/index.js] to check for the facebook option and a point to facebook botkit to enable facebook_postback of botkit.
+I can go to [botprees-botkit](https://github.com/botpress/botpress-botkit/blob/master/src/index.js) to check for the facebook option and a point to facebook botkit to enable facebook_postback of botkit.
 
 I can catch the postback botpress and pipe it to the `controller.hears` of botkit. But I have a problem. At this point a cannot use botkit function like (bot.startConversation()). I will see later for this.
 
