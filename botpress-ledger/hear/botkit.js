@@ -79,17 +79,6 @@ module.exports = function(bp,env){
   //   }
   // })
 
-  bp.events.on("add_category",data=>{
-    // Transaction into the DB
-    console.log(data);
-    bp.db.get()
-    .then(knex=>{
-      knex("categorie_type").insert({category:data})
-      .returning('category')
-      .then(thx=>{console.log("Add Category " + thx )})
-    })
-  })
-
 
   return controller;
   })
