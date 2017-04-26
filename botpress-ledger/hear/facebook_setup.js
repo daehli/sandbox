@@ -25,7 +25,6 @@ module.exports = function (bp) {
   }
 
 
-
   var url = ""
   var environnement = bp.db.kvs.get("__config")
   .then(knex=>{
