@@ -30,7 +30,7 @@ module.exports = function(bp){
     });
 
     const txt = txt => bp.messenger.createText(event.user.id,txt,{typing:true});
-    
+
     bp.convo.start(event,convo=> {
       convo.threads['default'].addMessage(txt("Hi, I'm Ledger-Bot. I'm here to help peoples track their outgo easily."))
       convo.threads['default'].addQuestion(txt("Do you want to try Ledger-Bot ?"),[
@@ -99,7 +99,6 @@ module.exports = function(bp){
               str[length-2] = "."
               str = str.join("");
             }
-            console.log(str);
             convo.set('amount',parseFloat(str))
             convo.switchTo("First_exemple_date")
           }
@@ -123,8 +122,10 @@ module.exports = function(bp){
               convo.set("time",strTime);
               convo.switchTo("First_exemple_category");
             }
-            convo.say(txt("I was not enable to understand your date."));
-            convo.switchTo("First_exemple_date")
+            else{
+              convo.say(txt("I was not enable to understand your date."));
+              convo.switchTo("First_exemple_date")
+            }
           }
         },
         {

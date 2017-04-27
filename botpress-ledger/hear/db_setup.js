@@ -15,7 +15,7 @@ module.exports = function(bp){
       table.float("amount",2);
       table.date("date");
       table.integer('categorie_id').unsigned();
-      table.foreign('categorie_id').references('categorie_type.id')
+      table.foreign('categorie_id').references('categories_type.id')
     })
     .then(res=>{bp.logger.info("Initial Table big_book")})
     .catch(err=>{bp.logger.info(err)})

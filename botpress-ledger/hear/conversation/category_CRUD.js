@@ -193,7 +193,7 @@ module.exports= function(bp){
         pattern:/no|nop|n/i,
         callback:()=>{
 
-            list.say(txt("Perfert, I will not show you your categories list"))    
+            list.say(txt("Perfert, I will not show you your categories list"))
             list.next();
         }
     },
@@ -262,7 +262,6 @@ module.exports= function(bp){
   })
 
   bp.events.on("delete_category",data=>{
-    console.log(data)
     // Transaction into the DB
     bp.db.get()
     .then(knex=>{

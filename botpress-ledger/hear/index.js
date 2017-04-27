@@ -7,6 +7,7 @@ module.exports = function(bp) {
   var postback = require('./postback')(bp);
   var first_time = require('./conversation/getting_started')(bp);
   var category_CRUD = require('./conversation/category_CRUD')(bp);
+  var register_QUESTION = require('./conversation/register_with_question')(bp);
 
   bp.hear({text:/Review/i,platform:"facebook",type:"payload"},(event,next)=>{
 
