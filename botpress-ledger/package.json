@@ -1,6 +1,6 @@
 {
   "name": "botpress-ledger",
-  "version": "0.0.1",
+  "version": "0.2",
   "description": "Bot for checking financial ledger",
   "main": "hear/index.js",
   "dependencies": {
