@@ -156,7 +156,6 @@ module.exports= function(bp){
       {
         pattern:/yes|y|yop|for sure/i,
         callback:()=>{
-          console.log(del);
           delete_category("categories_type",del.get("id"));
           del.next();
         }
@@ -169,9 +168,6 @@ module.exports= function(bp){
         }
       }
     ])
-    //
-    // del.createThread("del")
-    // del.threads["del"]
   })
 
   bp.hear({type:"quick_reply",platform:"facebook",text:/LIST_CATEGORY/i},(event,next)=>{
@@ -180,9 +176,54 @@ module.exports= function(bp){
 
     const quick = (message,quick_reply)  => bp.messenger.createText(event.user.id,"What you want to do ?",quick_reply);
 
+    list = bp.convo.create(event);
+
+    list.createThread("list")
+    list.switchTo("list");
+    list.activate()
+
+    list.threads['list'].addQuestion(txt("Do you want to see your categories lists ?"),[
+    {
+        pattern:/yes|y|yop|yep|y/i,
+        callback:()=>{
+            getList(list,txt)
+        }
+    },
+    {
+        pattern:/no|nop|n/i,
+        callback:()=>{
+
+            list.say(txt("Perfert, I will not show you your categories list"))    
+            list.next();
+        }
+    },
+    {
+        default:true,
+        callback:()=>{
+            list.say(txt("I don't understand what you mean."))
+            list.switchTo("list")
+        }
+    }
+    ])
   })
 
 
+  const getList = (conversation,txt)=>{
+    bp.db.get()
+    .then(knex=>{
+        return knex("categories_type").select()
+    })
+    .then(thx=>{
+        let count = 0;
+        for(row of thx){
+            //conversation.set("type_"+count,row.name)
+            //count++;
+            conversation.say(txt(`Name : ${row.name}`))
+        }
+        conversation.next()
+    })
+
+  }
 
   const ids = (table,name,convo)=> {
     bp.db.get()
@@ -207,8 +248,6 @@ module.exports= function(bp){
       return knex(table).del().where({"id":id})
     })
     .then((row)=>{
-      console.log(row);
-
     })
   }
 
