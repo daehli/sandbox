@@ -20,91 +20,215 @@ module.exports= function(bp){
       {
         content_type: 'text',
         title: 'List',
-        payload: 'List_CATEGORY'
+        payload: 'LIST_CATEGORY'
       }
     ],
     typing:true
   }
 
-  const txt = txt => bp.messenger.createText(event.user.id,txt,{typing:true});
 
-  const quick = (message,quick_reply)  => bp.messenger.createText(event.user.id,"What you want to do ?",quick_reply);
+  bp.hear({type:"message",platform:"facebook",text:/MENU_CATEGORY/i},(event,next)=>{
 
-  bp.hear({type:"message",platform:"facebook",text:/ADD_CATEGORY/i},(event,next)=>{
+    const txt = txt => bp.messenger.createText(event.user.id,txt,{typing:true});
+
+    const quick = (message,quick_reply)  => bp.messenger.createText(event.user.id,message,quick_reply);
 
 
-
-    bp.convo.start(event,convo=>{
-
-      convo.threads['default'].addMessage(txt("You are able to modify, delete, listed and add a category to ledger-bot"))
-      convo.threads['default'].addMessage(quick("What you want to do ?",categorie)
-      // ,[
-        // {
-        //   pattern:/Add/i,
-        //   callback:(response)=>{
-        //     console.log("ADD")
-        //     let cat = response.text;
-        //     bp.events.emit("add_category",cat.toString());
-        //
-        //   }
-        // },
-        // {
-        //   pattern:/DELETE_CATEGORY/i,
-        //   type:"postback",
-        //   callback:(response)=>{
-        //
-        //   }
-        // },
-        // {
-        //   pattern:/UPDATE_CATEGORY/i,
-        //   type:"postback",
-        //   callback:()=>{
-        //
-        //   }
-        // },
-      //   {
-      //     default:true,
-      //     callback:()=>{
-      //       convo.next()
-      //     }
-      //   }
-      // ]
-    )
+    // Il faut que je passe par cette fonction pour toucher au autres hears
+    bp.messenger.sendText(event.user.id,"You are able to modify, delete, listed and add a category to ledger-bot",{typing:true})
+    .then(()=>{
+      bp.messenger.sendText(event.user.id,"What you want to do ?",categorie)
     })
+
+
+    // Je vais demander au gars c'est quoi le problème.
+    //
+    // var begin = bp.convo.start(event)
+    //
+    // begin.threads['default'].addMessage(txt("You are able to modify, delete, listed and add a category to ledger-bot"))
+    // begin.threads['default'].addMessage(quick("What you want to do ?",categorie))
+    // ,[
+    // {
+    //   pattern:/Add/i,
+    //   callback:(response)=>{
+    //     console.log("ADD")
+    //     let cat = response.text;
+    //     bp.events.emit("add_category",cat.toString());
+    //
+    //   }
+    // },
+    // {
+    //   pattern:/DELETE_CATEGORY/i,
+    //   type:"postback",
+    //   callback:(response)=>{
+    //
+    //   }
+    // },
+    // {
+    //   pattern:/UPDATE_CATEGORY/i,
+    //   type:"postback",
+    //   callback:()=>{
+    //
+    //   }
+    // },
+    //   {
+    //     default:true,
+    //     callback:()=>{
+    //       convo.next()
+    //     }
+    //   }
+    // ]
   })
+
 
   bp.hear({type:"quick_reply",platform:"facebook",text:/ADD_CATEGORY/i},(event,next)=>{
-    console.log("ADD")
-    bp.convo.start(event,convo=>{
 
-      bp.threads['default'].addQuestion()
+    const txt = txt => bp.messenger.createText(event.user.id,txt,{typing:true});
 
+    let add  = bp.convo.create(event)
+
+    add.activate();
+    // convo.activate();
+    add.threads['default'].addQuestion(txt("What's the name of your Category to add ?"),[
+      {
+        pattern:/.{3,}/i,
+        callback:(resp)=>{
+          console.log(resp.text)
+          // I can ask to save
+          bp.events.emit("add_category",resp.text);
+          add.say(txt("Great, I add " + resp.text + " to your personnals categories."))
+          add.next()
+        }
+      },
+      {
+        default:true,
+        callback:()=>{
+          add.say(txt("I don't understand your category. Your category should be at least 3 characters."))
+          add.switchTo("default");
+        }
+      }
+    ])
+  })
+
+  bp.hear({type:"quick_reply",platform:"facebook",text:/UPDATE_CATEGORY/i},(event,next)=>{
+    const txt = txt => bp.messenger.createText(event.user.id,txt,{typing:true});
+
+    const quick = (message,quick_reply)  => bp.messenger.createText(event.user.id,"What you want to do ?",quick_reply);
+
+
+  })
+
+  bp.hear({type:"quick_reply",platform:"facebook",text:/DELETE_CATEGORY/i},(event,next)=>{
+
+    const txt = txt => bp.messenger.createText(event.user.id,txt,{typing:true});
+
+    var del = bp.convo.create(event)
+    del.createThread("DELETE")
+    del.switchTo("DELETE");
+    del.activate();
+    del.threads['DELETE'].addQuestion(txt("Name your category to delete."),[
+      {
+        pattern:/.{3,}/i,
+        callback:(response)=>{
+          var data = ids("categories_type",response.text,del)
+          console.log(response.text);
+          del.set("name",response.text);
+          del.switchTo("confirmation")
+          // }
+          // else{
+          //   del.say(txt("Oups Your category doesn't exist please try again"))
+          //   del.switchTo("DELETE");
+          // }
+          // bp.events.emit("delete_category",response.text);
+        }
+      },
+      {
+        default:true,
+        callback:()=>{
+          del.say(txt("I cannot understand your category"))
+          del.switchTo("default");
+        }
+      }
+    ])
+
+    del.createThread("confirmation")
+    del.threads["confirmation"].addQuestion(txt(`Do you want to delete ${del._cache.name}`),[
+      {
+        pattern:/yes|y|yop|for sure/i,
+        callback:()=>{
+          console.log(del);
+          delete_category("categories_type",del.get("id"));
+          del.next();
+        }
+      },
+      {
+        pattern:/no|nop|n/i,
+        callback:()=>{
+          del.say(txt("Ok, I will kept your category."))
+          del.next();
+        }
+      }
+    ])
+    //
+    // del.createThread("del")
+    // del.threads["del"]
+  })
+
+  bp.hear({type:"quick_reply",platform:"facebook",text:/LIST_CATEGORY/i},(event,next)=>{
+
+    const txt = txt => bp.messenger.createText(event.user.id,txt,{typing:true});
+
+    const quick = (message,quick_reply)  => bp.messenger.createText(event.user.id,"What you want to do ?",quick_reply);
+
+  })
+
+
+
+  const ids = (table,name,convo)=> {
+    bp.db.get()
+    .then(knex=>{
+      return knex(table).where({"name":name}).select("id")
+      .returning("id")
+      .then(thx=>{
+        console.log(thx);
+        if(thx.length === 1){
+          convo.set("id",thx[0].id);
+        }
+        else{
+          bp.logger.info("They have a problem in the Database")
+        }
+      })
+    })
+  }
+
+  const delete_category = (table,id) => {
+    bp.db.get()
+    .then(knex=>{
+      return knex(table).del().where({"id":id})
+    })
+    .then((row)=>{
+      console.log(row);
 
     })
-  })
-
-  bp.hear({type:"quick_reply",platform:"facebook",text:/ADD_UPDATE/i},(event,next)=>{
-
-  })
-
-  bp.hear({type:"quick_reply",platform:"facebook",text:/ADD_DELETE/i},(event,next)=>{
-
-  })
-
-  bp.hear({type:"quick_reply",platform:"facebook",text:/ADD_LIST/i},(event,next)=>{
-
-  })
-
+  }
 
   bp.events.on("add_category",data=>{
     // Transaction into the DB
-    console.log(data);
-    bp.db.get()
+    var obj = bp.db.get()
     .then(knex=>{
-      knex("categorie_type").insert({category:data})
-      .returning('category')
+      knex("categories_type").insert({"name":data})
+      .returning('id')
       .then(thx=>{console.log("Add Category " + thx )})
     })
   })
 
+  bp.events.on("delete_category",data=>{
+    console.log(data)
+    // Transaction into the DB
+    bp.db.get()
+    .then(knex=>{
+      knex('categories_type').where({category:data}).select("id")
+      .then(thx=>{console.log("Id : " + thx)})
+    })
+  })
 }

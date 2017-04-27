@@ -4,7 +4,6 @@ module.exports = function(bp) {
 
   const facebook = require('./facebook_setup')(bp);
   const setup_db = require('./db_setup')(bp);
-  var conversation = require('./conversation')(bp);
   var postback = require('./postback')(bp);
   var first_time = require('./conversation/getting_started')(bp);
   var category_CRUD = require('./conversation/category_CRUD')(bp);

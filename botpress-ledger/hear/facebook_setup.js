@@ -76,7 +76,7 @@ module.exports = function (bp) {
             {
               "title":"Add category",
               "type":"postback",
-              "payload":"ADD_CATEGORY"
+              "payload":"MENU_CATEGORY"
             },
             {
               "title":"Review",
