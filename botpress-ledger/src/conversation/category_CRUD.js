@@ -27,7 +27,7 @@ module.exports= function(bp){
   }
 
 
-  bp.hear({type:"message",platform:"facebook",text:/MENU_CATEGORY/i},(event,next)=>{
+  bp.hear({type:"postback",text:/MENU_CATEGORY/i},(event,next)=>{
 
     const txt = txt => bp.messenger.createText(event.user.id,txt,{typing:true});
 
@@ -130,6 +130,7 @@ module.exports= function(bp){
       {
         pattern:/.{3,}/i,
         callback:(response)=>{
+          // Changer le fonctionnement.
           var data = ids("categories_type",response.text,del)
           console.log(response.text);
           del.set("name",response.text);
@@ -156,8 +157,14 @@ module.exports= function(bp){
       {
         pattern:/yes|y|yop|for sure/i,
         callback:()=>{
-          delete_category("categories_type",del.get("id"));
-          del.next();
+          delete_category("categories_type",del.get("id"),function(err,data){
+            if(err){
+              bp.db.debug(err)
+            }
+            if(data!== undefined){
+              del.next();
+            }
+          });
         }
       },
       {
@@ -232,7 +239,7 @@ module.exports= function(bp){
       .returning("id")
       .then(thx=>{
         console.log(thx);
-        if(thx.length === 1){
+        if(thx[0] !== undefined){
           convo.set("id",thx[0].id);
         }
         else{
@@ -242,12 +249,19 @@ module.exports= function(bp){
     })
   }
 
-  const delete_category = (table,id) => {
+  const delete_category = (table,id,callback) => {
     bp.db.get()
     .then(knex=>{
       return knex(table).del().where({"id":id})
     })
     .then((row)=>{
+      if(row[0]!== undefined){
+        console.log(row[0])
+        callback(null,row[0])
+      }
+    })
+    .catch((err)=>{
+      callback(err);
     })
   }
 

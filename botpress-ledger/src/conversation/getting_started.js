@@ -46,7 +46,7 @@ module.exports = function(bp){
         {
           pattern: /no|n|nop|stop/i,
           callback:()=>{
-            convo.say(txt("Ok, I you want to came back later you can type first_time."))
+            convo.say(txt("Ok, if you want to came back later you can type first_time."))
             convo.stop('Cancel')
           }
         },

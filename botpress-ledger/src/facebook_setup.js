@@ -28,21 +28,21 @@ module.exports = function (bp) {
   var url = ""
   var environnement = bp.db.kvs.get("__config")
   .then(knex=>{
-    url = 'https://graph.facebook.com/v2.6/me/messenger_profile?access_token=' + knex["botpress-messenger"]["accessToken"]
-    var env = {};
-    env["accessToken"] = knex["botpress-messenger"]["accessToken"];
-    env["verifyToken"] = knex["botpress-messenger"]["verifyToken"];
+    url = 'https://graph.facebook.com/v2.6/me/messenger_profile?access_token='
+     + knex["botpress-messenger"]["accessToken"]
+    var env = {}
+    env["accessToken"] = knex["botpress-messenger"]["accessToken"]
+    env["verifyToken"] = knex["botpress-messenger"]["verifyToken"]
     // Payload quand on appuie sur le getting Started
     var getting_starter = {
       "get_started": {
         "payload":"START"
       }
     }
-    Request.post(url, {form: getting_starter}, function (err, response, body) {
+    Request.post(url, { form: getting_starter }, function (err, response, body) {
       if (err) {
         console.log(err)
-      }
-      else {
+      } else {
         console.log('Getting started', body)
       }
     })
@@ -59,11 +59,10 @@ module.exports = function (bp) {
         }
       ]
     }
-    Request.post(url, {form: greeting_text}, function (err, response, body) {
+    Request.post(url, { form: greeting_text }, function (err, response, body) {
       if (err) {
         console.log(err)
-      }
-      else {
+      } else {
         console.log('greetings added', body)
       }
     })
@@ -74,7 +73,7 @@ module.exports = function (bp) {
           "locale":"default",
           "call_to_actions":[
             {
-              "title":"Add category",
+              "title":"Menu category",
               "type":"postback",
               "payload":"MENU_CATEGORY"
             },
@@ -96,6 +95,13 @@ module.exports = function (bp) {
                   "title": "Add outgo",
                   "type" : "postback",
                   "payload":"ADD_OUTGO"
+                },
+                {
+                  "type": 'web_url',
+                  "title": 'Set Outgo_GUI',
+                  "url": `https://ledger.localtunnel.me/api/botpress-messenger/form`,
+                  "webview_height_ratio": 'tall',
+                  "messenger_extensions": true,
                 }
               ]
             }
@@ -103,22 +109,51 @@ module.exports = function (bp) {
         }
       ]
     }
-    Request.post(url, {form: persistent_menu}, function (err, response, body) {
+    Request.post(url, { form: persistent_menu }, function (err, response, body) {
       if (err) {
         console.log(err)
-      }
-      else {
+      } else {
         console.log('Add persistent_menu', body)
       }
     })
-    return env;
-  });
+
+    // Chat extensions
+    var whitelist = {
+      "whitelisted_domains":[
+        "https://ledger.localtunnel.me/"
+      ]
+    }
+    Request.post(url,{ form:whitelist },function(err,response,body){
+      if(err){
+        bp.logger.debug(err)
+      } else {
+        console.log("Add WhiteList ",body)
+      }
+    })
+
+
+    // Drawer for the apps
+    var home_url = {
+      "url":"https://ledger.localtunnel.me/",
+      "webview_height_ratio":"tall",
+      "in_test":true
+    }
+
+    Request.post(url,{ form:home_url },function(err,response,body){
+      if(err){
+        bp.logger.debug(err)
+      } else{
+        console.log("Add Drawer",body)
+      }
+    })
+    return env
+  })
 
 
   var getConfig = function(){
     var instance = bp.db.kvs.get("__config")
     .then((knex)=>{
-      return knex;
+      return knex
     })
 
     return instance
@@ -128,5 +163,5 @@ module.exports = function (bp) {
     sentence:sentence,
     environnement:environnement,
     getConfig:getConfig
-  };
+  }
 }
