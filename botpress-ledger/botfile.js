@@ -4,6 +4,7 @@ module.exports = {
   * where the content is stored
   * you can access this property from `bp.dataLocation`
   */
+
   dataDir: process.env.BOTPRESS_DATA_DIR || './data',
 
   modulesConfigDir: process.env.BOTPRESS_CONFIG_DIR || './modules_config',
