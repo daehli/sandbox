@@ -12,11 +12,6 @@ module.exports = function (bp) {
       },
       {
         content_type: 'text',
-        title: 'Exemple of Use',
-        payload: 'HELP_MENU_EXEMPLE'
-      },
-      {
-        content_type: 'text',
         title: 'Add Categorie',
         payload: 'HELP_MENU_CATEGORIE'
       }
@@ -91,11 +86,6 @@ module.exports = function (bp) {
               ]
             },
             {
-              "title":"Review",
-              "type":"postback",
-              "payload":"Review"
-            },
-            {
               "title":"Add outgo",
               "type":"nested",
               "call_to_actions":[
@@ -134,7 +124,9 @@ module.exports = function (bp) {
     var whitelist = {
       "whitelisted_domains":[
         "https://ledger.localtunnel.me/",
-        "https://ledge.localtunnel.me/"
+        "https://ledge.localtunnel.me/",
+        "https://my-accounting-pal.herokuapp.com",
+
       ]
     }
     Request.post(url,{ form:whitelist },function(err,response,body){
