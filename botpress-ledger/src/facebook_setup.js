@@ -79,7 +79,7 @@ module.exports = function (bp) {
                 {
                   "title":"GUI Categories",
                   "type":"web_url",
-                  "url": `https://ledger.localtunnel.me/api/botpress-ledger/form_categories`,
+                  "url": process.env.URL_BASE + "api/botpress-ledger/form_categories",
                   "webview_height_ratio": 'tall',
                   "messenger_extensions": true,
                 }
@@ -102,7 +102,7 @@ module.exports = function (bp) {
                 {
                   "type": 'web_url',
                   "title": 'Set Outgo_GUI',
-                  "url": `https://ledger.localtunnel.me/api/botpress-ledger/form_outgo`,
+                  "url": process.env.URL_BASE + "api/botpress-ledger/form_outgo",
                   "webview_height_ratio": 'tall',
                   "messenger_extensions": true,
                 }
@@ -123,7 +123,7 @@ module.exports = function (bp) {
     // Chat extensions
     var whitelist = {
       "whitelisted_domains":[
-        "https://ledger.localtunnel.me/",
+        process.env.URL_BASE,
         "https://ledge.localtunnel.me/",
         "https://my-accounting-pal.herokuapp.com",
 
@@ -140,7 +140,7 @@ module.exports = function (bp) {
 
     // Drawer for the apps
     var home_url = {
-      "url":"https://ledger.localtunnel.me/",
+      "url":process.env.URL_BASE,
       "webview_height_ratio":"tall",
       "in_test":true
     }
