@@ -79,7 +79,7 @@ module.exports = function (bp) {
                 {
                   "title":"GUI Categories",
                   "type":"web_url",
-                  "url": process.env.URL_BASE + "api/botpress-ledger/form_categories",
+                  "url": process.env.URL_BASE.toString() + "api/botpress-ledger/form_categories",
                   "webview_height_ratio": 'tall',
                   "messenger_extensions": true,
                 }
@@ -102,7 +102,7 @@ module.exports = function (bp) {
                 {
                   "type": 'web_url',
                   "title": 'Set Outgo_GUI',
-                  "url": process.env.URL_BASE + "api/botpress-ledger/form_outgo",
+                  "url": process.env.URL_BASE.toString() + "api/botpress-ledger/form_outgo",
                   "webview_height_ratio": 'tall',
                   "messenger_extensions": true,
                 }
