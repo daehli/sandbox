@@ -74,8 +74,21 @@ module.exports = function (bp) {
           "call_to_actions":[
             {
               "title":"Menu category",
-              "type":"postback",
-              "payload":"MENU_CATEGORY"
+              "type":"nested",
+              "call_to_actions":[
+                {
+                  "title":"Bot Categories",
+                  "payload":"MENU_CATEGORY",
+                  "type":"postback"
+                },
+                {
+                  "title":"GUI Categories",
+                  "type":"web_url",
+                  "url": `https://ledger.localtunnel.me/api/botpress-ledger/form_categories`,
+                  "webview_height_ratio": 'tall',
+                  "messenger_extensions": true,
+                }
+              ]
             },
             {
               "title":"Review",
@@ -99,7 +112,7 @@ module.exports = function (bp) {
                 {
                   "type": 'web_url',
                   "title": 'Set Outgo_GUI',
-                  "url": `https://ledger.localtunnel.me/api/botpress-messenger/form`,
+                  "url": `https://ledger.localtunnel.me/api/botpress-ledger/form_outgo`,
                   "webview_height_ratio": 'tall',
                   "messenger_extensions": true,
                 }
@@ -120,7 +133,8 @@ module.exports = function (bp) {
     // Chat extensions
     var whitelist = {
       "whitelisted_domains":[
-        "https://ledger.localtunnel.me/"
+        "https://ledger.localtunnel.me/",
+        "https://ledge.localtunnel.me/"
       ]
     }
     Request.post(url,{ form:whitelist },function(err,response,body){

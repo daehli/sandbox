@@ -42,5 +42,9 @@ module.exports = {
     password: process.env.PG_PASSWORD || '',
     database: process.env.PG_DB || '',
     ssl: process.env.PG_SSL || false
-  }
+  },
+
+  url: process.env.URL_BASE, // set URL_BASE=""
+  access_token : process.env.ACCESS_TOKEN // set ACCESS_TOKEN
+
 }

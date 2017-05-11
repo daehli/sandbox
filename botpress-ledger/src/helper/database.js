@@ -36,6 +36,47 @@ module.exports = function(bp){
     })
   }
 
+  const deleteIdCategory =(id,callback)=>{
+    callback = callback || function(){}
+    bp.db.get()
+    .then(knex=>{
+      return knex("categories_type").del().where({ "id":id })
+    })
+    .then((row)=>{
+      callback(null,row)
+    })
+    .catch((err)=>{
+      callback(err)
+    })
+  }
+
+  const addCategory = (obj,callback)=>{
+    callback = callback || function(){}
+
+    bp.db.get()
+    .then(knex=>{
+      if(obj.name === undefined){
+        throw TypeError
+      }
+      return knex.insert(
+        {
+          name:obj.name
+        },['id','name','created_at','updated_at'])
+        .into("categories_type")
+    })
+    .map(row=>{
+      return row
+    })
+    .then(thx=>{
+      console.log(thx)
+      thx = thx || []
+      callback(null,thx)
+    })
+    .catch(err=>{
+      callback(err,null)
+    })
+  }
+
   const addRegister = (obj,callback) =>{
     obj = obj || {}
     bp.db.get()
@@ -67,7 +108,9 @@ module.exports = function(bp){
   return {
     addRegister:addRegister,
     getList:getList,
-    getIdCategory:getIdCategory
+    getIdCategory:getIdCategory,
+    deleteIdCategory:deleteIdCategory,
+    addCategory:addCategory
 
   }
 

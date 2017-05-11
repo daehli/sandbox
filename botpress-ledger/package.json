@@ -4,6 +4,7 @@
   "description": "Bot for checking financial ledger",
   "main": "src/index.js",
   "dependencies": {
+    "axios": "^0.16.1",
     "babel-core": "^6.3.26",
     "babel-eslint": "^7.2.3",
     "babel-loader": "^6.2.0",

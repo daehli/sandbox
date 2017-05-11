@@ -9,18 +9,18 @@
 
 /* ----------  External Libraries  ---------- */
 
-import React from 'react'; // eslint-disable-line
-import ReactDOM from 'react-dom';
+import React from 'react' // eslint-disable-line
+import ReactDOM from 'react-dom'
 
 /* ----------  Local Components  ---------- */
 
 import OutGo from './app.jsx'
+import Main from "./main_categories"
 
 /* ----------  Styles  ---------- */
 
-import 'weui';
-import 'react-weui/lib/react-weui.min.css';
-import '../static/style.css';
+import 'weui'
+import 'react-weui/lib/react-weui.min.css'
 
 // Simple initializer for attaching the Preferences App to the DOM
 
@@ -31,10 +31,22 @@ window.attachOutGo = (userId, Outgo) => {
    * so show an error page if MessengerExtensions was unable to start
    */
   if (userId) {
-    console.log("")
-    const app =  <OutGo />
-    ReactDOM.render(app, document.getElementById('content'));
+    const app = <OutGo />
+    ReactDOM.render(app, document.getElementById('content'))
   } else {
-    ReactDOM.render("<h1>Oops</h1>", document.getElementById('content'));
+    ReactDOM.render("<h1>Oops</h1>", document.getElementById('content'))
   }
-};
+}
+
+window.attachCategories = (userId, Categories) => {
+  /**
+   * MessengerExtensions are only available on iOS and Android,
+   * so show an error page if MessengerExtensions was unable to start
+   */
+  if (userId) {
+    const app = <Main />
+    ReactDOM.render(app, document.getElementById('content'))
+  } else {
+    ReactDOM.render("<h1>Oops</h1>", document.getElementById('content'))
+  }
+}

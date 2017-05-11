@@ -194,6 +194,10 @@ module.exports = function(bp){
         }
       ])
 
+      convo.on('first_time',()=>{
+        convo.switchTo("First_exemple_description")
+      })
+
       convo.on('cancel',()=>{
         convo.say(txt("Bye Bye"))
       })

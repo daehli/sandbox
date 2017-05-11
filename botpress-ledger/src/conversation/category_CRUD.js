@@ -27,11 +27,11 @@ module.exports= function(bp){
   }
 
 
-  bp.hear({type:"postback",text:/MENU_CATEGORY/i},(event,next)=>{
+  bp.hear({ type:"postback",text:/MENU_CATEGORY/i},(event,next)=>{
 
-    const txt = txt => bp.messenger.createText(event.user.id,txt,{typing:true});
+    const txt = txt => bp.messenger.createText(event.user.id,txt,{typing:true})
 
-    const quick = (message,quick_reply)  => bp.messenger.createText(event.user.id,message,quick_reply);
+    const quick = (message,quick_reply)  => bp.messenger.createText(event.user.id,message,quick_reply)
 
 
     // Il faut que je passe par cette fonction pour toucher au autres hears
@@ -52,8 +52,8 @@ module.exports= function(bp){
     //   pattern:/Add/i,
     //   callback:(response)=>{
     //     console.log("ADD")
-    //     let cat = response.text;
-    //     bp.events.emit("add_category",cat.toString());
+    //     let cat = response.text
+    //     bp.events.emit("add_category",cat.toString())
     //
     //   }
     // },
@@ -81,21 +81,21 @@ module.exports= function(bp){
   })
 
 
-  bp.hear({type:"quick_reply",platform:"facebook",text:/ADD_CATEGORY/i},(event,next)=>{
+  bp.hear({ type:"quick_reply",platform:"facebook",text:/ADD_CATEGORY/i},(event,next)=>{
 
-    const txt = txt => bp.messenger.createText(event.user.id,txt,{typing:true});
+    const txt = txt => bp.messenger.createText(event.user.id,txt,{typing:true})
 
     let add  = bp.convo.create(event)
 
-    add.activate();
-    // convo.activate();
+    add.activate()
+    // convo.activate()
     add.threads['default'].addQuestion(txt("What's the name of your Category to add ?"),[
       {
         pattern:/.{3,}/i,
         callback:(resp)=>{
           console.log(resp.text)
           // I can ask to save
-          bp.events.emit("add_category",resp.text);
+          bp.events.emit("add_category",resp.text)
           add.say(txt("Great, I add " + resp.text + " to your personnals categories."))
           add.next()
         }
@@ -104,50 +104,50 @@ module.exports= function(bp){
         default:true,
         callback:()=>{
           add.say(txt("I don't understand your category. Your category should be at least 3 characters."))
-          add.switchTo("default");
+          add.switchTo("default")
         }
       }
     ])
   })
 
-  bp.hear({type:"quick_reply",platform:"facebook",text:/UPDATE_CATEGORY/i},(event,next)=>{
-    const txt = txt => bp.messenger.createText(event.user.id,txt,{typing:true});
+  bp.hear({ type:"quick_reply",platform:"facebook",text:/UPDATE_CATEGORY/i},(event,next)=>{
+    const txt = txt => bp.messenger.createText(event.user.id,txt,{typing:true})
 
-    const quick = (message,quick_reply)  => bp.messenger.createText(event.user.id,"What you want to do ?",quick_reply);
+    const quick = (message,quick_reply)  => bp.messenger.createText(event.user.id,"What you want to do ?",quick_reply)
 
 
   })
 
-  bp.hear({type:"quick_reply",platform:"facebook",text:/DELETE_CATEGORY/i},(event,next)=>{
+  bp.hear({ type:"quick_reply",platform:"facebook",text:/DELETE_CATEGORY/i},(event,next)=>{
 
-    const txt = txt => bp.messenger.createText(event.user.id,txt,{typing:true});
+    const txt = txt => bp.messenger.createText(event.user.id,txt,{typing:true})
 
     var del = bp.convo.create(event)
     del.createThread("DELETE")
-    del.switchTo("DELETE");
-    del.activate();
+    del.switchTo("DELETE")
+    del.activate()
     del.threads['DELETE'].addQuestion(txt("Name your category to delete."),[
       {
         pattern:/.{3,}/i,
         callback:(response)=>{
           // Changer le fonctionnement.
           var data = ids("categories_type",response.text,del)
-          console.log(response.text);
-          del.set("name",response.text);
+          console.log(response.text)
+          del.set("name",response.text)
           del.switchTo("confirmation")
           // }
           // else{
           //   del.say(txt("Oups Your category doesn't exist please try again"))
-          //   del.switchTo("DELETE");
+          //   del.switchTo("DELETE")
           // }
-          // bp.events.emit("delete_category",response.text);
+          // bp.events.emit("delete_category",response.text)
         }
       },
       {
         default:true,
         callback:()=>{
           del.say(txt("I cannot understand your category"))
-          del.switchTo("default");
+          del.switchTo("default")
         }
       }
     ])
@@ -162,55 +162,56 @@ module.exports= function(bp){
               bp.db.debug(err)
             }
             if(data!== undefined){
-              del.next();
+              del.say(txt("Your Categories as been deleted"))
+              del.next()
             }
-          });
+          })
         }
       },
       {
         pattern:/no|nop|n/i,
         callback:()=>{
           del.say(txt("Ok, I will kept your category."))
-          del.next();
+          del.next()
         }
       }
     ])
   })
 
-  bp.hear({type:"quick_reply",platform:"facebook",text:/LIST_CATEGORY/i},(event,next)=>{
+  bp.hear({ type:"quick_reply",platform:"facebook",text:/LIST_CATEGORY/i},(event,next)=>{
 
-    const txt = txt => bp.messenger.createText(event.user.id,txt,{typing:true});
+    const txt = txt => bp.messenger.createText(event.user.id,txt,{typing:true})
 
-    const quick = (message,quick_reply)  => bp.messenger.createText(event.user.id,"What you want to do ?",quick_reply);
+    const quick = (message,quick_reply) => bp.messenger.createText(event.user.id,"What you want to do ?",quick_reply)
 
-    list = bp.convo.create(event);
+    var list = bp.convo.create(event)
 
     list.createThread("list")
-    list.switchTo("list");
+    list.switchTo("list")
     list.activate()
 
     list.threads['list'].addQuestion(txt("Do you want to see your categories lists ?"),[
-    {
+      {
         pattern:/yes|y|yop|yep|y/i,
         callback:()=>{
-            getList(list,txt)
+          getList(list,txt)
         }
-    },
-    {
+      },
+      {
         pattern:/no|nop|n/i,
         callback:()=>{
 
-            list.say(txt("Perfert, I will not show you your categories list"))
-            list.next();
+          list.say(txt("Perfert, I will not show you your categories list"))
+          list.next()
         }
-    },
-    {
+      },
+      {
         default:true,
         callback:()=>{
-            list.say(txt("I don't understand what you mean."))
-            list.switchTo("list")
+          list.say(txt("I don't understand what you mean."))
+          list.switchTo("list")
         }
-    }
+      }
     ])
   })
 
@@ -218,16 +219,16 @@ module.exports= function(bp){
   const getList = (conversation,txt)=>{
     bp.db.get()
     .then(knex=>{
-        return knex("categories_type").select()
+      return knex("categories_type").select()
     })
     .then(thx=>{
-        let count = 0;
-        for(row of thx){
-            //conversation.set("type_"+count,row.name)
-            //count++;
-            conversation.say(txt(`Name : ${row.name}`))
-        }
-        conversation.next()
+      let count = 0
+      for(let row of thx){
+        //conversation.set("type_"+count,row.name)
+        //count++
+        conversation.say(txt(`Name : ${row.name}`))
+      }
+      conversation.next()
     })
 
   }
@@ -235,14 +236,13 @@ module.exports= function(bp){
   const ids = (table,name,convo)=> {
     bp.db.get()
     .then(knex=>{
-      return knex(table).where({"name":name}).select("id")
+      return knex(table).where({ "name":name}).select("id")
       .returning("id")
       .then(thx=>{
-        console.log(thx);
+        console.log(thx)
         if(thx[0] !== undefined){
-          convo.set("id",thx[0].id);
-        }
-        else{
+          convo.set("id",thx[0].id)
+        } else{
           bp.logger.info("They have a problem in the Database")
         }
       })
@@ -252,7 +252,7 @@ module.exports= function(bp){
   const delete_category = (table,id,callback) => {
     bp.db.get()
     .then(knex=>{
-      return knex(table).del().where({"id":id})
+      return knex(table).del().where({ "id":id })
     })
     .then((row)=>{
       if(row[0]!== undefined){
@@ -261,7 +261,7 @@ module.exports= function(bp){
       }
     })
     .catch((err)=>{
-      callback(err);
+      callback(err)
     })
   }
 
@@ -269,9 +269,9 @@ module.exports= function(bp){
     // Transaction into the DB
     var obj = bp.db.get()
     .then(knex=>{
-      knex("categories_type").insert({"name":data})
+      knex("categories_type").insert({ "name":data})
       .returning('id')
-      .then(thx=>{console.log("Add Category " + thx )})
+      .then(thx=>{ console.log("Add Category " + thx ) })
     })
   })
 
@@ -279,8 +279,8 @@ module.exports= function(bp){
     // Transaction into the DB
     bp.db.get()
     .then(knex=>{
-      knex('categories_type').where({category:data}).select("id")
-      .then(thx=>{console.log("Id : " + thx)})
+      knex('categories_type').where({ category:data}).select("id")
+      .then(thx=>{ console.log("Id : " + thx) })
     })
   })
 }

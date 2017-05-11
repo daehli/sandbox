@@ -348,3 +348,8 @@ section {
   width: 1.3rem;
   height: 1.3rem;
 }
+
+div.row_cat {
+  background-color: black,
+  color:white
+}
