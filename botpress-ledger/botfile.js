@@ -34,6 +34,7 @@ module.exports = {
   /**
   * Postgres configuration
   */
+  // postgres://{user}:{password}@{hostname}:{port}/{database-name}
   postgres: {
     enabled: process.env.DATABASE === 'postgres',
     host: process.env.PG_HOST || '127.0.0.1',
@@ -41,7 +42,7 @@ module.exports = {
     user: process.env.PG_USER || '',
     password: process.env.PG_PASSWORD || '',
     database: process.env.PG_DB || '',
-    ssl: process.env.PG_SSL || false
+    ssl: process.env.PG_SSL || true
   },
 
   url: process.env.URL_BASE, // set URL_BASE=""
