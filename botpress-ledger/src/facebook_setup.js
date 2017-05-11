@@ -123,7 +123,7 @@ module.exports = function (bp) {
     // Chat extensions
     var whitelist = {
       "whitelisted_domains":[
-        process.env.URL_BASE,
+        process.env.URL_BASE.toString(),
         "https://ledge.localtunnel.me/",
         "https://my-accounting-pal.herokuapp.com",
 
