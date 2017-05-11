@@ -72,7 +72,5 @@ module.exports = function(bp) {
     It was specificaly built for freelancer.",facebook.sentence)
   })
 
-
-
   bp.middlewares.load()
 }

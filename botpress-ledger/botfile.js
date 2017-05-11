@@ -51,50 +51,50 @@ module.exports = {
   // Messenger Configuration
   config:{
     'botpress-messenger':{
-      persistentMenu: true,
-      persistentMenuItems:[
-        {
-          "title":"Menu category",
-          "type":"nested",
-          "call_to_actions":[
-            {
-              "title":"Bot Categories",
-              "payload":"MENU_CATEGORY",
-              "type":"postback"
-            },
-            {
-              "title":"GUI Categories",
-              "type":"web_url",
-              "url": process.env.URL_BASE.toString() + "api/botpress-ledger/form_categories",
-              "webview_height_ratio": 'tall',
-              "messenger_extensions": true,
-            }
-          ]
-        },
-        {
-          "title":"Add outgo",
-          "type":"nested",
-          "call_to_actions":[
-            {
-              "title": "Quick outgo",
-              "type" : "postback",
-              "payload":"QUICK_OUTGO"
-            },
-            {
-              "title": "Add outgo",
-              "type" : "postback",
-              "payload":"ADD_OUTGO"
-            },
-            {
-              "type": 'web_url',
-              "title": 'Set Outgo_GUI',
-              "url": process.env.URL_BASE.toString() + "api/botpress-ledger/form_outgo",
-              "webview_height_ratio": 'tall',
-              "messenger_extensions": true,
-            }
-          ]
-        }
-      ],
+      // persistentMenu: true,
+      // persistentMenuItems:[
+      //   {
+      //     "title":"Menu category",
+      //     "type":"nested",
+      //     "call_to_actions":[
+      //       {
+      //         "title":"Bot Categories",
+      //         "payload":"MENU_CATEGORY",
+      //         "type":"postback"
+      //       },
+      //       {
+      //         "title":"GUI Categories",
+      //         "type":"web_url",
+      //         "url": process.env.URL_BASE.toString() + "api/botpress-ledger/form_categories",
+      //         "webview_height_ratio": 'tall',
+      //         "messenger_extensions": true,
+      //       }
+      //     ]
+      //   },
+      //   {
+      //     "title":"Add outgo",
+      //     "type":"nested",
+      //     "call_to_actions":[
+      //       {
+      //         "title": "Quick outgo",
+      //         "type" : "postback",
+      //         "payload":"QUICK_OUTGO"
+      //       },
+      //       {
+      //         "title": "Add outgo",
+      //         "type" : "postback",
+      //         "payload":"ADD_OUTGO"
+      //       },
+      //       {
+      //         "type": 'web_url',
+      //         "title": 'Set Outgo_GUI',
+      //         "url": process.env.URL_BASE.toString() + "api/botpress-ledger/form_outgo",
+      //         "webview_height_ratio": 'tall',
+      //         "messenger_extensions": true,
+      //       }
+      //     ]
+      //   }
+      // ],
 
 
       greetingMessage:'Tools to manage the outgo of a freelancer',
@@ -107,11 +107,11 @@ module.exports = {
         "https://ledger.localtunnel.me/",
         "https://my-accounting-pal.herokuapp.com",
       ],
-      chatExtensionHomeUrl:{
-        "url":process.env.URL_BASE.toString(),
-        "webview_height_ratio":"tall",
-        "in_test":true
-      }
+      // chatExtensionHomeUrl:{
+      //   "url":process.env.URL_BASE.toString(),
+      //   "webview_height_ratio":"tall",
+      //   "in_test":true
+      // }
     }
   }
 }
