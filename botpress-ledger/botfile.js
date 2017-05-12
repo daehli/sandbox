@@ -105,6 +105,7 @@ module.exports = {
       trustedDomains:[
         process.env.URL_BASE.toString(),
         "https://ledger.localtunnel.me/",
+        "https://ledge.localtunnel.me/",
         "https://my-accounting-pal.herokuapp.com",
       ],
       chatExtensionHomeUrl:{

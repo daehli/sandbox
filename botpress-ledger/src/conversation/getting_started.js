@@ -67,7 +67,6 @@ module.exports = function(bp){
         {
           pattern:/(.{4,})/i,
           callback:(response)=>{
-            console.log("description")
             convo.say(txt("You gave a good description. I'm proud of you."))
             convo.set('description',response.match)
             convo.switchTo("First_exemple_amount")
@@ -116,9 +115,9 @@ module.exports = function(bp){
         {
           pattern:/(.{4,})/i,
           callback:(response)=>{
-            var date = chrono.parse(response.match)
-            if(date[0].text !== undefined){
-              var strTime = date[0].text.toString()
+            var date = chrono.parseDate(response.match)
+            if(date !== undefined){
+              var strTime = date.toString()
               convo.set("time",strTime)
               convo.switchTo("First_exemple_category")
             } else{
@@ -141,11 +140,8 @@ module.exports = function(bp){
         {
           pattern:/(.{3,})/i,
           callback:(response)=>{
-            console.log("category")
             convo.set("category",response.match)
-            // convo.next()
-            console.log(convo)
-            convo.switchTo("termine")
+            convo.emit("termine")
           }
         },
         {
@@ -157,15 +153,11 @@ module.exports = function(bp){
         }
       ])
 
-      // convo.on('termine',()=>{
-      //   convo.say(txt("Great, It's simple like this to add a outgo in ledger-bot."))
-      //   convo.say(txt(`Your outgo was: Description : ${convo.get("description")} Amount : ${convo.get("amount")} Date : ${convo.get("time")} Category : ${convo.get("category")}`))
-      //   convo.next()
-      // })
-      convo.createThread("termine")
-      convo.threads["termine"].addMessage(txt("Great, It's simple like this to add a outgo in ledger-bot."))
-      convo.threads["termine"].addMessage(txt(`Your outgo was: Description : ${convo.get("description")} Amount : ${convo.get("amount")} Date : ${convo.get("time")} Category : ${convo.get("category")}`))
-      convo.next()
+      convo.on('termine',()=>{
+        convo.say(txt("Great, It's simple like this to add a outgo in ledger-bot."))
+        convo.say(txt(`Your outgo was: Description : ${convo.get("description")} Amount : ${convo.get("amount")} Date : ${convo.get("time")} Category : ${convo.get("category")}`))
+        convo.emit("More_explication")
+      })
 
       convo.on('More_explication',()=>{
         convo.say(txt("You can type \"help\" to receive more information about botpress"))
@@ -209,7 +201,6 @@ module.exports = function(bp){
   })
 
   bp.hear({ text:/first_time/i,type:"message",platform:"facebook" },(event,next)=>{
-    console.log("first_time")
     bp.convo.start(event,convo=>{
       convo.switchTo("default")
     })
