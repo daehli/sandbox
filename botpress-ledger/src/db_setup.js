@@ -4,8 +4,11 @@ module.exports = function(bp){
   var knex = bp.db.get().then(knex=>{
     knex.schema.createTableIfNotExists("categories_type",table=>{
       table.increments('id').primary()
-      table.string("name").unique() // change for name
+      table.string("name") // change for name
       table.timestamps()
+      table.integer('owner').unsigned()
+      table.foreign('owner').references('user.id')
+      table.unique("name","owner")
     })
     .then(res=>bp.logger.info("Initial Table categorie_type"))
     .catch(err=>{ bp.logger.info(err) })
@@ -17,6 +20,8 @@ module.exports = function(bp){
       table.binary("image_url")
       table.integer('categorie_id').unsigned()
       table.foreign('categorie_id').references('categories_type.id')
+      table.integer('owner').unsigned()
+      table.foreign('owner').references('user.id')
     })
     .then(res=>{ bp.logger.info("Initial Table big_book") })
     .catch(err=>{ bp.logger.info(err) })

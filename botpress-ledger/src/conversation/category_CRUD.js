@@ -27,15 +27,15 @@ module.exports= function(bp){
   }
 
 
-  bp.hear({ type:"postback",text:/MENU_CATEGORY/i},(event,next)=>{
+  bp.hear({ type:"postback",text:/MENU_CATEGORY/i },(event,next)=>{
 
-    const txt = txt => bp.messenger.createText(event.user.id,txt,{typing:true})
+    const txt = txt => bp.messenger.createText(event.user.id,txt,{ typing:true })
 
-    const quick = (message,quick_reply)  => bp.messenger.createText(event.user.id,message,quick_reply)
+    const quick = (message,quick_reply) => bp.messenger.createText(event.user.id,message,quick_reply)
 
 
     // Il faut que je passe par cette fonction pour toucher au autres hears
-    bp.messenger.sendText(event.user.id,"You are able to modify, delete, listed and add a category to ledger-bot",{typing:true})
+    bp.messenger.sendText(event.user.id,"You are able to modify, delete, listed and add a category to ledger-bot",{ typing:true })
     .then(()=>{
       bp.messenger.sendText(event.user.id,"What you want to do ?",categorie)
     })
@@ -81,11 +81,11 @@ module.exports= function(bp){
   })
 
 
-  bp.hear({ type:"quick_reply",platform:"facebook",text:/ADD_CATEGORY/i},(event,next)=>{
+  bp.hear({ type:"quick_reply",platform:"facebook",text:/ADD_CATEGORY/i },(event,next)=>{
 
-    const txt = txt => bp.messenger.createText(event.user.id,txt,{typing:true})
+    const txt = txt => bp.messenger.createText(event.user.id,txt,{ typing:true })
 
-    let add  = bp.convo.create(event)
+    let add = bp.convo.create(event)
 
     add.activate()
     // convo.activate()
@@ -93,10 +93,17 @@ module.exports= function(bp){
       {
         pattern:/.{3,}/i,
         callback:(resp)=>{
-          console.log(resp.text)
+          var data = {
+            name : resp.text,
+            owner : event.user.id
+          }
           // I can ask to save
-          bp.events.emit("add_category",resp.text)
-          add.say(txt("Great, I add " + resp.text + " to your personnals categories."))
+          var ids = bp.events.emit("add_category",data)
+          if (!ids) {
+            add.say(txt("You already register this categories"))
+          } else {
+            add.say(txt("Great, I add " + resp.text + " to your personnals categories."))
+          }
           add.next()
         }
       },
@@ -110,17 +117,17 @@ module.exports= function(bp){
     ])
   })
 
-  bp.hear({ type:"quick_reply",platform:"facebook",text:/UPDATE_CATEGORY/i},(event,next)=>{
-    const txt = txt => bp.messenger.createText(event.user.id,txt,{typing:true})
+  bp.hear({ type:"quick_reply",platform:"facebook",text:/UPDATE_CATEGORY/i },(event,next)=>{
+    const txt = txt => bp.messenger.createText(event.user.id,txt,{ typing:true })
 
-    const quick = (message,quick_reply)  => bp.messenger.createText(event.user.id,"What you want to do ?",quick_reply)
+    const quick = (message,quick_reply) => bp.messenger.createText(event.user.id,"What you want to do ?",quick_reply)
 
 
   })
 
-  bp.hear({ type:"quick_reply",platform:"facebook",text:/DELETE_CATEGORY/i},(event,next)=>{
+  bp.hear({ type:"quick_reply",platform:"facebook",text:/DELETE_CATEGORY/i },(event,next)=>{
 
-    const txt = txt => bp.messenger.createText(event.user.id,txt,{typing:true})
+    const txt = txt => bp.messenger.createText(event.user.id,txt,{ typing:true })
 
     var del = bp.convo.create(event)
     del.createThread("DELETE")
@@ -178,9 +185,9 @@ module.exports= function(bp){
     ])
   })
 
-  bp.hear({ type:"quick_reply",platform:"facebook",text:/LIST_CATEGORY/i},(event,next)=>{
+  bp.hear({ type:"quick_reply",platform:"facebook",text:/LIST_CATEGORY/i },(event,next)=>{
 
-    const txt = txt => bp.messenger.createText(event.user.id,txt,{typing:true})
+    const txt = txt => bp.messenger.createText(event.user.id,txt,{ typing:true })
 
     const quick = (message,quick_reply) => bp.messenger.createText(event.user.id,"What you want to do ?",quick_reply)
 
@@ -194,7 +201,7 @@ module.exports= function(bp){
       {
         pattern:/yes|y|yop|yep|y/i,
         callback:()=>{
-          getList(list,txt)
+          getList(list,txt,event)
         }
       },
       {
@@ -216,17 +223,21 @@ module.exports= function(bp){
   })
 
 
-  const getList = (conversation,txt)=>{
+  const getList = (conversation,txt,event)=>{
     bp.db.get()
     .then(knex=>{
-      return knex("categories_type").select()
+      return knex("categories_type").where("owner",event.user.id)
     })
     .then(thx=>{
-      let count = 0
-      for(let row of thx){
-        //conversation.set("type_"+count,row.name)
-        //count++
-        conversation.say(txt(`Name : ${row.name}`))
+      if(thx[0]=== undefined){
+        conversation.say(txt("You have no category register"))
+      } else {
+        let count = 0
+        for(let row of thx){
+          //conversation.set("type_"+count,row.name)
+          //count++
+          conversation.say(txt(`Name : ${row.name}`))
+        }
       }
       conversation.next()
     })
@@ -236,10 +247,9 @@ module.exports= function(bp){
   const ids = (table,name,convo)=> {
     bp.db.get()
     .then(knex=>{
-      return knex(table).where({ "name":name}).select("id")
+      return knex(table).where({ "name":name }).select("id")
       .returning("id")
       .then(thx=>{
-        console.log(thx)
         if(thx[0] !== undefined){
           convo.set("id",thx[0].id)
         } else{
@@ -269,9 +279,10 @@ module.exports= function(bp){
     // Transaction into the DB
     var obj = bp.db.get()
     .then(knex=>{
-      knex("categories_type").insert({ "name":data})
+      knex("categories_type").insert({ "name":data.name,"owner":data.owner })
       .returning('id')
-      .then(thx=>{ console.log("Add Category " + thx ) })
+      .then(thx=>{ return 1 })
+      .catch(err=>{ return 0 })
     })
   })
 
@@ -279,8 +290,9 @@ module.exports= function(bp){
     // Transaction into the DB
     bp.db.get()
     .then(knex=>{
-      knex('categories_type').where({ category:data}).select("id")
-      .then(thx=>{ console.log("Id : " + thx) })
+      knex('categories_type').where({ category:data }).select("id")
+      .then(thx=>{ return 1 })
+      .catch(err=>{ return 0 })
     })
   })
 }
